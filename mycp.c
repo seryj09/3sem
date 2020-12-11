@@ -3,7 +3,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
-//#include <getopt.h>
+#include <getopt.h>
 
 
 void Copy(const int src, const int dst) {
@@ -22,8 +22,6 @@ void Copy(const int src, const int dst) {
         n -= p;
     }
 }
-
-
 int main(int argc, char *argv[]) {
     int i = 0, counts_files = 0;
     char *source_file, *target_file;
@@ -41,13 +39,19 @@ int main(int argc, char *argv[]) {
             else {
                 counts_files++;
             }
-            
+
         }
     }
     if (counts_files != 2 ) {
         printf("usage: cp [-R [-H | -L | -P]] [-fi | -n] [-apvXc] source_file target_file\n       cp [-R [-H | -L | -P]] [-fi | -n] [-apvXc] source_file ... target_directory\n");
         return 0;
     }
+
+    static struct option longopts[] = {
+             { "verbose",      no_argument,            NULL,     'v' },
+             { "force",        no_argument,            NULL,     'f' },
+             { "interactive",  no_argument,            NULL,     'i' }
+     };
 
     int src, dst, ch = 0;
     //открываем src файл только для чтения
@@ -57,13 +61,13 @@ int main(int argc, char *argv[]) {
     }
     // сделаем флаги для опций -f -v -i
     int e=0,v=0,f=0;
-    while ((ch = getopt(argc, argv, "ifv")) != -1) {
+    while ((ch = getopt_long(argc, argv, "ifv", longopts, 0)) != -1) {
         switch (ch) {
             case 'i':
                 e=1;
                 break;
             case 'v':
-                v=1;  
+                v=1;
                 break;
             case 'f':
                 f=1;
@@ -75,16 +79,16 @@ int main(int argc, char *argv[]) {
         remove(target_file);
     }
     //затем открываем новый dst файл
-    if ((dst = open(target_file, O_RDWR | O_CREAT | O_TRUNC, S_IWRITE | S_IREAD)) < 0) {
+    if ((dst = open(target_file, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO)) < 0) {
         perror("cp: file cannot be written");
         exit(1);
     }
 
     if (e == 1) {
         printf("overwrite %s? (y/n [n])", target_file);
-        char *answer;
-        scanf("%c", answer);
-        if (*answer != 'Y' && *answer != 'y') {
+        char answer;
+        scanf("%c", &answer);
+        if (answer != 'Y' && answer != 'y') {
             printf("not overwritten\n");
             return 0;
         }
