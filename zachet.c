@@ -29,9 +29,9 @@ int main(int argc, char *argv[]) {
     // printf("%d", count);
 
 
-    struct stat *buf;
-    fstat(fd[1], buf);
-    printf("%lld\n", buf->st_size);
+    struct stat buf = {0};
+    fstat(fd[1], &buf);
+    printf("%lld\n", buf.st_size);
 
     return 0;
 }
