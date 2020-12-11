@@ -20,17 +20,18 @@ int main(int argc, char *argv[]) {
         perror("Can\'t create pipe\n");
         exit(1);
     }
-    // char *str;
-    // int count = 0;
-    // str = "a";
-    // while (write(fd[1], str, 1) > 0) {
-    //     count++;
-    // }
-    // write(1, &count, 4);
+    // dup2(fd[1], 1);
+    char *str;
+    int count = 0;
+    str = "a";
+    while (write(fd[1], str, 1) > 0) {
+        count++;
+    }
+    write(1, &count, 4);
 
-    int *pBytes;
-    fseek (&fd[0], 0 , SEEK_END);
-    *pBytes = ftell(&fd[0]);
-    rewind(&fd[0]);
+    // int *pBytes;
+    // fseek (&fd[0], 0 , SEEK_END);
+    // *pBytes = ftell(&fd[0]);
+    // rewind(&fd[0]);
     return 0;
 }
