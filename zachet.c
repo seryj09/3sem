@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
         perror("Can\'t create pipe\n");
         exit(1);
     }
-
+    
     // char *str;
     // int count = 0;
     // str = "a";
@@ -30,8 +30,8 @@ int main(int argc, char *argv[]) {
 
 
     struct stat *buf;
-    fstat64(fd[0], buf);
-    printf("%lld", buf->st_size);
+    fstat(fd[1], buf);
+    printf("%lld\n", buf->st_size);
 
     return 0;
 }
